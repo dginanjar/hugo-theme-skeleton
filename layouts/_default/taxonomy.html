@@ -1,0 +1,14 @@
+{{ define "main" }}
+
+    {{- partial "breadcrumb.html" . -}}
+
+    {{ range .Paginator.Pages }}
+        <article>
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+        </article>
+    {{ end }}
+
+    <nav>
+        {{- partial "pagination.html" . -}}
+    </nav>
+{{ end }}

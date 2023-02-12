@@ -1,0 +1,43 @@
+{{ define "main" }}
+
+    {{- partial "breadcrumb.html" . -}}
+
+    <article>
+        <header>
+            <h1>{{ .Title }}</h1>
+            <p>
+                <span>Posted on <time datetime="{{ .Date }}">{{ .Date.Format "2006, January 2" }}</time></span><br>
+                <span>{{ .ReadingTime }} min{{ if (ne .ReadingTime 1) }}s{{ end }} reading</span>
+            </p>
+        </header>
+
+        {{ $content := split .RawContent "<!--more-->" }}
+        {{ if index $content 1 }}
+            <blockquote>
+                {{ printf "%s\n\n[eof]" (index $content 0) | markdownify | strings.TrimSuffix "<p>[eof]</p>\n" | safeHTML }}
+            </blockquote>
+        {{ end }}
+
+        {{ if .Params.image }}
+            <div>
+                <img src="{{ .Params.image }}" alt="{{ .Params.Caption | default .Title  }}">
+            </div>
+        {{ end }}
+
+        <div>
+            {{ if index $content 1 }}
+                {{ index $content 1 | markdownify }}
+            {{ else }}
+                {{ .Content }}
+            {{ end }}
+        </div>
+
+        {{ if .GetTerms "tags" }}
+            <footer>
+                {{ range (.GetTerms "tags") }}
+                    <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+                {{ end }}
+            </footer>
+        {{ end }}
+    </article>
+{{ end }}

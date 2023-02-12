@@ -1,0 +1,8 @@
+{{ if not .Parent.IsHome }}
+    <ol>
+        {{ with .Parent }}
+            {{- partial "function/breadcrumb.html" . -}}
+        {{ end }}
+        <li>{{ .Title }}</li>
+    </ol>
+{{ end }}

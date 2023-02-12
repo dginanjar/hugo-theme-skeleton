@@ -1,0 +1,56 @@
+{{ define "main" }}
+
+    {{- partial "breadcrumb.html" . -}}
+
+    {{ if .Parent.Section }}
+        <article>
+            <header>
+                <h1>{{ .Title }}</h1>
+                <p>
+                    <span>Posted on <time datetime="{{ .Date }}">{{ .Date.Format "2006, January 2" }}</time></span><br>
+                    <span>{{ .ReadingTime }} min{{ if (ne .ReadingTime 1) }}s{{ end }} reading</span>
+                </p>
+            </header>
+
+            {{ $both := split .RawContent "<!--more-->" }}
+            {{ if index $both 1 }}
+                <blockquote>
+                    {{ index $both 0 | markdownify }}
+                </blockquote>
+            {{ end }}
+
+            {{ if .Params.image }}
+                <div>
+                    <img src="{{ .Params.image }}" alt="{{ .Params.Caption | default .Title  }}">
+                </div>
+            {{ end }}
+
+            <div>
+                {{ if index $both 1 }}
+                    {{ index $both 1 | markdownify }}
+                {{ else }}
+                    {{ .Content }}
+                {{ end }}
+            </div>
+
+            {{ if .GetTerms "tags" }}
+                <footer>
+                    {{ range (.GetTerms "tags") }}
+                        <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+                    {{ end }}
+                </footer>
+            {{ end }}
+        </article>
+    {{ end }}
+
+    {{ $paginator := .Paginate (where .Pages "Section" .Section) }}
+    {{ range $paginator.Pages }}
+        <article>
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+        </article>
+    {{ end }}
+
+    <nav>
+        {{- partial "pagination.html" . -}}
+    </nav>
+{{ end }}
